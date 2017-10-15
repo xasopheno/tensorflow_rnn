@@ -116,7 +116,7 @@ class ModelNetwork:
     # return data
 
 def embed_to_vocab(data_, vocab, predict=False):
-    print(str(predict))
+    print('predict: ', predict)
     print('0_ data_', data_)
     if predict:
         data_ = data_.replace("'", "")
@@ -125,21 +125,23 @@ def embed_to_vocab(data_, vocab, predict=False):
     data = np.zeros((len(data_), len(vocab)))
     cnt=0
     if predict:
-        print('if')
+        print('if_predict')
+        print('if_data:', data_)
+
         s = data_.replace(',', '')
-        # print ('s:   ', s)
         v = [0.0]*len(vocab)
+        print('s:', s)
         v[vocab.index(s)] = 1.0
+        print ('v:', v)
         data[cnt, :] = v
         cnt += 1
         print('cnt:', cnt)
-        return data
     else:
         print('else_: ', data_)
         print('data_[0]', data_[0: 10])
         for s in data_[:0]:
             s = s.replace(',', '')
-            print ('s:   ', s)
+            print ('s: ', s)
             v = [0.0]*len(vocab)
             v[vocab.index(s)] = 1.0
             data[cnt, :] = v
@@ -246,10 +248,7 @@ if ckpt_file == "":
     saver.save(sess, "saved/model.ckpt")
 
 
-
-
-## 2) GENERATE LEN_TEST_TEXT CHARACTERS USING THE TRAINED NETWORK
-
+# 2) GENERATE LEN_TEST_TEXT CHARACTERS USING THE TRAINED NETWORK
 if ckpt_file != "":
     saver.restore(sess, ckpt_file)
 
@@ -264,15 +263,10 @@ print ('!!!_gen_str): ', gen_str)
 for i in range(LEN_TEST_TEXT):
     print('inLoop')
     element = np.random.choice( range(len(vocab)), p=out ) # Sample character from the network according to the generated output probabilities
-    # print(element)
-    # element = re.sub("',", '', element)
-    gen_str += vocab[element]
-    print('element ', element, 'vocab[element]', vocab[element])
-    # print('gen_str:', gen_str)
-    out = net.run_step(embed_to_vocab(vocab[element], vocab,
-                                      # predict=True
-                                      ) ,
-                                    False )
+    print('#element ', element, '#vocab[element]', vocab[element])
+    gen_str += [vocab[element]]
+    out = net.run_step(embed_to_vocab(vocab[element], vocab, predict=True), False )
+    print('endLoop')
 print ('final_string', gen_str)
 
 
