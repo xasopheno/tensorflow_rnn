@@ -93,41 +93,26 @@ class ModelNetwork:
         return cost
 
 
-# Embed string to character-arrays -- it generates an array len(data) x len(vocab)
-# Vocab is a list of elements
-# def embed_to_vocab(data_, vocab, predict=False):
-    # print('in embed_to_vocab')
-    # len_data = len(data_)
-    # if predict:
-    #     len_data = 1
-    # print('len(data_),', len(data_), 'len(vocab): ', len(vocab))
-    # data = np.zeros((len_data, len(vocab)))
-    # print('data', data)
+def embed_to_vocab(data_, vocab, predict=False):
+    # # TRAIN
+    # data = np.zeros((len(data_), len(vocab)))
+    #
     # cnt=0
-    # if predict:
-    #     data_ = [data_]
     # for s in data_:
-    #     print(s)
-    #     v = [0.0]*len_data
+    #     v = [0.0]*len(vocab)
     #     v[vocab.index(s)] = 1.0
     #     data[cnt, :] = v
     #     cnt += 1
     #
     # return data
 
-def embed_to_vocab(data_, vocab, predict=False):
-    print('predict: ', predict)
-    print('0_ data_', data_)
+    # PREDICT
     if predict:
         data_ = data_.replace("'", "")
-    print('1_data: ', data_)
-    print ('2_len_data: ', len(data_))
     data = np.zeros((len(data_), len(vocab)))
     cnt=0
-    if predict:
-        print('if_predict')
-        print('if_data:', data_)
 
+    if predict:
         s = data_.replace(',', '')
         v = [0.0]*len(vocab)
         print('s:', s)
@@ -137,8 +122,6 @@ def embed_to_vocab(data_, vocab, predict=False):
         cnt += 1
         print('cnt:', cnt)
     else:
-        print('else_: ', data_)
-        print('data_[0]', data_[0: 10])
         for s in data_[:0]:
             s = s.replace(',', '')
             print ('s: ', s)
@@ -176,7 +159,7 @@ with open('data/shakespeare.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
 
-print ('4_data', data_)
+# print ('4_data', data_)
 ## Convert to 1-hot coding
 vocab = sorted(list(set(data_)))
 print(vocab)
@@ -189,10 +172,10 @@ print(data)
 in_size = out_size = len(vocab)
 lstm_size = 128 #128s
 num_layers = 2
-batch_size = 128 #128
-time_steps = 50 #50
+batch_size = 256 #128
+time_steps = 100 #50
 
-NUM_TRAIN_BATCHES = 20000
+NUM_TRAIN_BATCHES = 6000
 
 LEN_TEST_TEXT = 500 # Number of test characters of text to generate after training the network
 print(in_size)
@@ -224,6 +207,7 @@ if ckpt_file == "":
     batch_y = np.zeros((batch_size, time_steps, in_size))
 
     possible_batch_ids = range(data.shape[0]-time_steps-1)
+
     for i in range(NUM_TRAIN_BATCHES):
         # Sample time_steps consecutive samples from the dataset text file
         batch_id = random.sample( possible_batch_ids, batch_size )
@@ -235,8 +219,8 @@ if ckpt_file == "":
             batch[:, j, :] = data[ind1, :]
             batch_y[:, j, :] = data[ind2, :]
 
-
         cst = net.train_batch(batch, batch_y)
+        # print(cst)
 
         if (i%100) == 0:
             new_time = time.time()
@@ -245,6 +229,7 @@ if ckpt_file == "":
 
             print ("batch: ",i,"   loss: ",cst,"   speed: ",(100.0/diff)," batches / s")
 
+            saver.save(sess, "saved/model.ckpt")
     saver.save(sess, "saved/model.ckpt")
 
 
