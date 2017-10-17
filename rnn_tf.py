@@ -94,7 +94,7 @@ class ModelNetwork:
 
 
 def embed_to_vocab(data_, vocab, predict=False):
-    # # TRAIN
+    # TRAIN
     # data = np.zeros((len(data_), len(vocab)))
     #
     # cnt=0
@@ -173,11 +173,11 @@ in_size = out_size = len(vocab)
 lstm_size = 128 #128s
 num_layers = 2
 batch_size = 256 #128
-time_steps = 100 #50
+time_steps = 200 #50
 
 NUM_TRAIN_BATCHES = 6000
 
-LEN_TEST_TEXT = 500 # Number of test characters of text to generate after training the network
+LEN_TEST_TEXT = 700 # Number of test characters of text to generate after training the network
 print(in_size)
 
 
@@ -229,8 +229,8 @@ if ckpt_file == "":
 
             print ("batch: ",i,"   loss: ",cst,"   speed: ",(100.0/diff)," batches / s")
 
-            saver.save(sess, "saved/model.ckpt")
-    saver.save(sess, "saved/model.ckpt")
+            saver.save(sess, "saved/model_longer.ckpt")
+    saver.save(sess, "saved/model_longer.ckpt")
 
 
 # 2) GENERATE LEN_TEST_TEXT CHARACTERS USING THE TRAINED NETWORK
