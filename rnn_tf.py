@@ -3,72 +3,65 @@ import numpy as np
 import random
 import time
 import sys
+import subprocess
 from NeuralNetwork import Network
 
 
-def embed_to_vocab(data_, vocab, predict=False):
-    # TRAIN
-    # data = np.zeros((len(data_), len(vocab)))
-    #
-    # cnt=0
-    # for s in data_:
-    #     v = [0.0]*len(vocab)
-    #     v[vocab.index(s)] = 1.0
-    #     data[cnt, :] = v
-    #     cnt += 1
-    #
-    # return data
-
-    # PREDICT
-    if predict:
-        data_ = data_.replace("'", "")
-    data = np.zeros((len(data_), len(vocab)))
-    cnt=0
-
-    if predict:
-        s = data_.replace(',', '')
-        v = [0.0]*len(vocab)
-        print('s:', s)
-        v[vocab.index(s)] = 1.0
-        print ('v:', v)
-        data[cnt, :] = v
-        cnt += 1
-        print('cnt:', cnt)
-    else:
-        for s in data_[:0]:
-            s = s.replace(',', '')
-            print ('s: ', s)
-            v = [0.0]*len(vocab)
-            v[vocab.index(s)] = 1.0
-            data[cnt, :] = v
-            cnt += 1
-            print('cnt:', cnt)
-    return data
-
-def decode_embed(array, vocab):
-    return vocab[ array.index(1) ]
-
-
-
-
-# _________________________________________________________________
-
 ckpt_file = ""
-TEST_PREFIX = "The " # Prefix to prompt the network in test mode
+TEST_PREFIX = "55 55 55 55 55 55 55 55" # Prefix to prompt the network in test mode
 
 print ("Usage:")
-print ('\t\t ', sys.argv[0], ' [ckpt model to load] [prefix, e.g., "The "]')
+print ('\t\t ', sys.argv[0], ' [ckpt model to load] [prefix, e.g., "55 55 55 55 55 "]')
 if len(sys.argv)>=2:
     ckpt_file=sys.argv[1]
 if len(sys.argv)==3:
     TEST_PREFIX = sys.argv[2]
 
 
+def embed_to_vocab(data_, vocab, predict=False):
+    if ckpt_file == "":
+        # TRAIN
+        data = np.zeros((len(data_), len(vocab)))
+
+        count=0
+        for s in data_:
+            v = [0.0]*len(vocab)
+            v[vocab.index(s)] = 1.0
+            data[count, :] = v
+            count += 1
+
+        return data
+
+    else:
+        # PREDICT
+        if predict:
+            data_ = data_.replace("'", "")
+
+        data = np.zeros((len(data_), len(vocab)))
+        count=0
+
+        if predict:
+            s = data_.replace(',', '')
+            v = [0.0]*len(vocab)
+            v[vocab.index(s)] = 1.0
+            data[count, :] = v
+            count += 1
+        else:
+            for s in data_[:0]:
+                s = s.replace(',', '')
+                v = [0.0]*len(vocab)
+                v[vocab.index(s)] = 1.0
+                data[count, :] = v
+                count += 1
+        return data
+
+def decode_embed(array, vocab):
+    return vocab[ array.index(1) ]
 
 
 ## Load the data
 data_ = ""
-with open('data/shakespeare.txt', 'r') as f:
+with open('datasets/bluesette.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
 
@@ -80,18 +73,18 @@ print(vocab)
 data = embed_to_vocab(data_, vocab,
                       # predict=True,
                       )
-print(data)
-
 in_size = out_size = len(vocab)
 lstm_size = 128 #128s
 num_layers = 2
-batch_size = 256 #128
-time_steps = 200 #50
+batch_size = 128 #128
+time_steps = 50 #50
 
 NUM_TRAIN_BATCHES = 6000
 
-LEN_TEST_TEXT = 700 # Number of test characters of text to generate after training the network
-print(in_size)
+LEN_TEST_TEXT = 500 # Number of test characters of text to generate after training the network
+ckpt_filename = 'model'
+midi_filename = 'midiOut.txt'
+
 
 
 ## Initialize the network
@@ -135,15 +128,18 @@ if ckpt_file == "":
         cst = net.train_batch(batch, batch_y)
         # print(cst)
 
-        if (i%100) == 0:
+        if (i % 100) == 0:
             new_time = time.time()
             diff = new_time - last_time
             last_time = new_time
 
             print ("batch: ",i,"   loss: ",cst,"   speed: ",(100.0/diff)," batches / s")
 
-            saver.save(sess, "saved/model_longer.ckpt")
-    saver.save(sess, "saved/model_longer.ckpt")
+            saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
+            subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt 55 55 55 55 55 55 55 55", shell=True)
+            subprocess.call("python Midi/midi_player.py", shell=True)
+
+    saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
 
 
 # 2) GENERATE LEN_TEST_TEXT CHARACTERS USING THE TRAINED NETWORK
@@ -155,16 +151,18 @@ print ('TEST_PREFIX', TEST_PREFIX)
 for i in range(len(TEST_PREFIX)):
     out = net.run_step( embed_to_vocab(TEST_PREFIX[i], vocab, predict=True), i==0)
 
-print ("SENTENCE:")
 gen_str = TEST_PREFIX
-print ('!!!_gen_str): ', gen_str)
+# print ('!!!_gen_str): ', gen_str)
 for i in range(LEN_TEST_TEXT):
-    print('inLoop')
     element = np.random.choice( range(len(vocab)), p=out ) # Sample character from the network according to the generated output probabilities
-    print('#element ', element, '#vocab[element]', vocab[element])
     gen_str += [vocab[element]]
-    out = net.run_step(embed_to_vocab(vocab[element], vocab, predict=True), False )
-    print('endLoop')
-print ('final_string', gen_str)
+    out = net.run_step(embed_to_vocab(vocab[element], vocab, predict=True), False)
+# print ('final_string', gen_str)
+
+with open(midi_filename, "w") as f:
+    f.seek(0)
+    f.truncate()
+    f.write(str(gen_str))
+
 
 
