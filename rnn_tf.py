@@ -59,9 +59,10 @@ def decode_embed(array, vocab):
     return vocab[ array.index(1) ]
 
 
+
 ## Load the data
 data_ = ""
-with open('datasets/bluesette.txt', 'r') as f:
+with open('datasets/bach.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
 
@@ -76,8 +77,8 @@ data = embed_to_vocab(data_, vocab,
 in_size = out_size = len(vocab)
 lstm_size = 128 #128s
 num_layers = 2
-batch_size = 128 #128
-time_steps = 50 #50
+batch_size = 256 #128
+time_steps = 200 #50
 
 NUM_TRAIN_BATCHES = 6000
 
