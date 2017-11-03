@@ -6,20 +6,21 @@ current_path = os.getcwd()
 from NoteToMidi import sendMidi
 import time
 
-subdivision = 0.08
+subdivision = 0.04
 last_value = 0
+counter = 0
 
 def play_midi(value):
     # print (value)
     sendMidi(value, subdivision)
-    #     # sendMidi(value + 4, .001)
-    #     # sendMidi(value, .01)
-    #     # sendMidi(value, .01)
-    #     # sendMidi(value + 11, .001)
-    #     # sendMidi(value - 10, 0.001)
-    #     # sendMidi(value, .001)
-    #     # sendMidi(value + 6, .001)
-    #     # sendMidi(value, .001)
+    sendMidi(value + 20, .001)
+    # sendMidi(value, .01)
+    # sendMidi(value, .01)
+    # sendMidi(value + 11, .001)
+    # sendMidi(value - 10, 0.001)
+    # sendMidi(value, .001)
+    # sendMidi(value + 6, .001)
+    # sendMidi(value, .001)
 
 def play_silence():
     # print(0)
@@ -28,17 +29,21 @@ def play_silence():
 with open('midiOut.txt', 'r') as f:
     values = f.read().split()
     for value in values:
-        value = value.replace("'", "")
-        value = value.replace(",", "")
-        # print(value)
-        #
-        try:
-            if int(value) is not 0:
-                play_midi(int(value))
-                # print(value)
-            else:
+        if counter % 2 == True:
+        # if counter % 1 == True:
+            value = value.replace("'", "")
+            value = value.replace(",", "")
+            # print(value)
+
+            try:
+                if int(value) is not 0:
+                    play_midi(int(value))
+                    # print(value)
+                else:
+                    play_silence()
+                    # print(value)
+            except:
+                print('value was unplayable', value)
                 play_silence()
-                # print(value)
-        except:
-            print('value was unplayable', value)
-            play_silence()
+
+        counter += 1

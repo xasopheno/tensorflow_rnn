@@ -62,9 +62,10 @@ def decode_embed(array, vocab):
 
 ## Load the data
 data_ = ""
-with open('datasets/bach.txt', 'r') as f:
+with open('datasets/singing2.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
+data_ = data_[1::2]
 
 # print ('4_data', data_)
 ## Convert to 1-hot coding
@@ -78,11 +79,11 @@ in_size = out_size = len(vocab)
 lstm_size = 128 #128s
 num_layers = 2
 batch_size = 256 #128
-time_steps = 200 #50
+time_steps = 50 #50
 
-NUM_TRAIN_BATCHES = 6000
+NUM_TRAIN_BATCHES = 5000
 
-LEN_TEST_TEXT = 500 # Number of test characters of text to generate after training the network
+LEN_TEST_TEXT = 1000 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
 midi_filename = 'midiOut.txt'
 
@@ -129,6 +130,9 @@ if ckpt_file == "":
         cst = net.train_batch(batch, batch_y)
         # print(cst)
 
+        if (i % 10) == 0:
+            print('batch: ', i)
+
         if (i % 100) == 0:
             new_time = time.time()
             diff = new_time - last_time
@@ -137,7 +141,7 @@ if ckpt_file == "":
             print ("batch: ",i,"   loss: ",cst,"   speed: ",(100.0/diff)," batches / s")
 
             saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
-            subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt 55 55 55 55 55 55 55 55", shell=True)
+            subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt 55 55 55 55 55 55 55 55 56 56 56 56 56 56 56 56 56", shell=True)
             subprocess.call("python Midi/midi_player.py", shell=True)
 
     saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
@@ -146,6 +150,7 @@ if ckpt_file == "":
 # 2) GENERATE LEN_TEST_TEXT CHARACTERS USING THE TRAINED NETWORK
 if ckpt_file != "":
     saver.restore(sess, ckpt_file)
+    print("using ckpt_file: ", ckpt_file)
 
 TEST_PREFIX = TEST_PREFIX.split(' ')
 print ('TEST_PREFIX', TEST_PREFIX)

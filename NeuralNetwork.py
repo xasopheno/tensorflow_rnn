@@ -9,7 +9,7 @@ class Network:
         self.lstm_size = lstm_size
         self.num_layers = num_layers
         self.out_size = out_size
-
+        self.temperature = 1
         self.session = session
 
         self.learning_rate = tf.constant( learning_rate )
@@ -34,7 +34,7 @@ class Network:
             self.rnn_out_B = tf.Variable(tf.random_normal( (self.out_size, ), stddev=0.01 ))
 
             outputs_reshaped = tf.reshape( outputs, [-1, self.lstm_size] )
-            network_output = ( tf.matmul( outputs_reshaped, self.rnn_out_W ) + self.rnn_out_B )
+            network_output = ( tf.matmul( outputs_reshaped, self.rnn_out_W ) + self.rnn_out_B ) / self.temperature
 
             batch_time_shape = tf.shape(outputs)
             self.final_outputs = tf.reshape( tf.nn.softmax( network_output), (batch_time_shape[0], batch_time_shape[1], self.out_size) )
