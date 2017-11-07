@@ -41,7 +41,7 @@ def embed_to_vocab(data_, vocab, predict=False):
         count=0
 
         if predict:
-            s = data_.replace(',', '')
+            s = data_
             v = [0.0]*len(vocab)
             v[vocab.index(s)] = 1.0
             data[count, :] = v
@@ -55,14 +55,10 @@ def embed_to_vocab(data_, vocab, predict=False):
                 count += 1
         return data
 
-def decode_embed(array, vocab):
-    return vocab[ array.index(1) ]
-
-
 
 ## Load the data
 data_ = ""
-with open('datasets/singing.txt', 'r') as f:
+with open('datasets/compressed/first.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
 # data_ = data_[1::1]
@@ -81,7 +77,7 @@ num_layers = 2
 batch_size = 128 #128
 time_steps = 50 #50
 
-NUM_TRAIN_BATCHES = 1500
+NUM_TRAIN_BATCHES = 50
 
 LEN_TEST_TEXT = 2000 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
@@ -130,10 +126,10 @@ if ckpt_file == "":
         cst = net.train_batch(batch, batch_y)
         # print(cst)
 
-        if (i % 10) == 0:
-            print('batch: ', i)
+        # if (i % 1) == 0:
+        #     print('batch: ', i)
 
-        if (i % 100) == 0:
+        if (i % 1) == 0:
             new_time = time.time()
             diff = new_time - last_time
             last_time = new_time
@@ -141,8 +137,8 @@ if ckpt_file == "":
             print ("batch: ",i,"   loss: ",cst,"   speed: ",(100.0/diff)," batches / s")
 
             saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
-            subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt 55 55 55 55 55 55 55 55 56 56 56 56 56 56 56 56 56", shell=True)
-            subprocess.call("python Midi/midi_player.py", shell=True)
+            subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt [60,20]", shell=True)
+            subprocess.call("python Midi/compressed_midi_player.py", shell=True)
 
     saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
 
