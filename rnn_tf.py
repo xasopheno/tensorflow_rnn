@@ -62,10 +62,10 @@ def decode_embed(array, vocab):
 
 ## Load the data
 data_ = ""
-with open('datasets/singing2.txt', 'r') as f:
+with open('datasets/singing.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
-data_ = data_[1::2]
+# data_ = data_[1::1]
 
 # print ('4_data', data_)
 ## Convert to 1-hot coding
@@ -78,12 +78,12 @@ data = embed_to_vocab(data_, vocab,
 in_size = out_size = len(vocab)
 lstm_size = 128 #128s
 num_layers = 2
-batch_size = 256 #128
+batch_size = 128 #128
 time_steps = 50 #50
 
-NUM_TRAIN_BATCHES = 5000
+NUM_TRAIN_BATCHES = 1500
 
-LEN_TEST_TEXT = 1000 # Number of test characters of text to generate after training the network
+LEN_TEST_TEXT = 2000 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
 midi_filename = 'midiOut.txt'
 

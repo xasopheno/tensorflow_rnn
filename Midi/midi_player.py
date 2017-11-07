@@ -13,7 +13,7 @@ counter = 0
 def play_midi(value):
     # print (value)
     sendMidi(value, subdivision)
-    sendMidi(value + 20, .001)
+    # sendMidi(value + 20, .001)
     # sendMidi(value, .01)
     # sendMidi(value, .01)
     # sendMidi(value + 11, .001)

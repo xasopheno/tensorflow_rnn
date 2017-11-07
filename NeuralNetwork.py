@@ -9,7 +9,7 @@ class Network:
         self.lstm_size = lstm_size
         self.num_layers = num_layers
         self.out_size = out_size
-        self.temperature = 1
+        self.temperature = 1.25
         self.session = session
 
         self.learning_rate = tf.constant( learning_rate )
