@@ -8,7 +8,7 @@ from NeuralNetwork import Network
 
 
 ckpt_file = ""
-TEST_PREFIX = "55 55 55 55 55 55 55 55" # Prefix to prompt the network in test mode
+# TEST_PREFIX = "55 55 55 55 55 55 55 55" # Prefix to prompt the network in test mode
 
 print ("Usage:")
 print ('\t\t ', sys.argv[0], ' [ckpt model to load] [prefix, e.g., "55 55 55 55 55 "]')
@@ -77,9 +77,9 @@ num_layers = 2
 batch_size = 128 #128
 time_steps = 50 #50
 
-NUM_TRAIN_BATCHES = 50
+NUM_TRAIN_BATCHES = 1500
 
-LEN_TEST_TEXT = 2000 # Number of test characters of text to generate after training the network
+LEN_TEST_TEXT = 50 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
 midi_filename = 'midiOut.txt'
 
@@ -126,10 +126,10 @@ if ckpt_file == "":
         cst = net.train_batch(batch, batch_y)
         # print(cst)
 
-        # if (i % 1) == 0:
-        #     print('batch: ', i)
+        if (i % 10) == 0:
+            print('batch: ', i)
 
-        if (i % 1) == 0:
+        if (i % 100) == 0:
             new_time = time.time()
             diff = new_time - last_time
             last_time = new_time
