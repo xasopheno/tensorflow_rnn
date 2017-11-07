@@ -9,7 +9,7 @@ class Network:
         self.lstm_size = lstm_size
         self.num_layers = num_layers
         self.out_size = out_size
-
+        self.temperature = 1.25
         self.session = session
 
         self.learning_rate = tf.constant( learning_rate )
@@ -23,7 +23,7 @@ class Network:
             self.lstm_init_value = tf.placeholder(tf.float32, shape=(None, self.num_layers*2*self.lstm_size), name="lstm_init_value")
 
             # LSTM
-            self.lstm_cells = [ tf.contrib.rnn.BasicLSTMCell(self.lstm_size, forget_bias=1.0, state_is_tuple=False) for i in range(self.num_layers)]
+            self.lstm_cells = [ tf.contrib.rnn.LSTMCell(self.lstm_size, forget_bias=1.0, state_is_tuple=False) for i in range(self.num_layers)]
             self.lstm = tf.contrib.rnn.MultiRNNCell(self.lstm_cells, state_is_tuple=False)
 
             # Iteratively compute output of recurrent network
@@ -34,7 +34,7 @@ class Network:
             self.rnn_out_B = tf.Variable(tf.random_normal( (self.out_size, ), stddev=0.01 ))
 
             outputs_reshaped = tf.reshape( outputs, [-1, self.lstm_size] )
-            network_output = ( tf.matmul( outputs_reshaped, self.rnn_out_W ) + self.rnn_out_B )
+            network_output = ( tf.matmul( outputs_reshaped, self.rnn_out_W ) + self.rnn_out_B ) / self.temperature
 
             batch_time_shape = tf.shape(outputs)
             self.final_outputs = tf.reshape( tf.nn.softmax( network_output), (batch_time_shape[0], batch_time_shape[1], self.out_size) )
