@@ -58,7 +58,7 @@ def embed_to_vocab(data_, vocab, predict=False):
 
 ## Load the data
 data_ = ""
-with open('datasets/compressed/first.txt', 'r') as f:
+with open('datasets/compressed/first_rounded.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
 # data_ = data_[1::1]
@@ -72,18 +72,16 @@ data = embed_to_vocab(data_, vocab,
                       # predict=True,
                       )
 in_size = out_size = len(vocab)
-lstm_size = 128 #128s
+lstm_size = 256 #128s
 num_layers = 2
 batch_size = 128 #128
-time_steps = 50 #50
+time_steps = 30 #50
 
-NUM_TRAIN_BATCHES = 1500
+NUM_TRAIN_BATCHES = 20000
 
 LEN_TEST_TEXT = 50 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
 midi_filename = 'midiOut.txt'
-
-
 
 ## Initialize the network
 config = tf.ConfigProto()

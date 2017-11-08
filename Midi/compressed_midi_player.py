@@ -14,7 +14,7 @@ midiout = rtmidi.MidiOut()
 midiout.open_port(0)
 
 
-subdivision = 0.04
+subdivision = 0.01
 last_value = 0
 counter = 0
 
@@ -23,7 +23,7 @@ def play_midi(value, length = 1):
     # sendMidi(value, length + subdivision)
     note_on = [0x90, value, 120] # channel 1, middle C, velocity 112
     midiout.send_message(note_on)
-    time.sleep(subdivision * length /4)
+    time.sleep(subdivision * length)
     note_off = [0x80, value, 120]
     midiout.send_message(note_off)
 
@@ -56,6 +56,7 @@ with open('midiOut.txt', 'r') as f:
         value = value.replace(",]", "")
         value = value.replace("',", "")
         value = value.replace("'", "")
+        value = value.replace("]]", "]")
         value = ast.literal_eval(value)
         # print(value)
         midi_num = int(value[0])
