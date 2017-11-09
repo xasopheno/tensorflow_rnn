@@ -5,7 +5,7 @@ import time
 import sys
 import subprocess
 from NeuralNetwork import Network
-
+import ast
 
 ckpt_file = ""
 # TEST_PREFIX = "55 55 55 55 55 55 55 55" # Prefix to prompt the network in test mode
@@ -36,6 +36,14 @@ def embed_to_vocab(data_, vocab, predict=False):
         # PREDICT
         if predict:
             data_ = data_.replace("'", "")
+            data_ = data_.replace("', '", " ")
+            data_ = data_.replace("[,", "")
+            data_ = data_.replace("['", "")
+            data_ = data_.replace(",]", "")
+            data_ = data_.replace("',", "")
+            data_ = data_.replace("'", "")
+            data_ = data_.replace("]]", "]")
+            data_ = str(data_)
 
         data = np.zeros((len(data_), len(vocab)))
         count=0
@@ -77,7 +85,7 @@ num_layers = 2
 batch_size = 128 #128
 time_steps = 30 #50
 
-NUM_TRAIN_BATCHES = 20000
+NUM_TRAIN_BATCHES = 3000
 
 LEN_TEST_TEXT = 50 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
@@ -125,14 +133,15 @@ if ckpt_file == "":
         # print(cst)
 
         if (i % 10) == 0:
-            print('batch: ', i)
+            print ("batch: ", i, "   loss: ", cst)
+
 
         if (i % 100) == 0:
             new_time = time.time()
             diff = new_time - last_time
             last_time = new_time
 
-            print ("batch: ",i,"   loss: ",cst,"   speed: ",(100.0/diff)," batches / s")
+            print ("batch: ", i, "   loss: ", cst, "   speed: ", (100.0/diff), " batches / s")
 
             saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
             subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt [60,20]", shell=True)
