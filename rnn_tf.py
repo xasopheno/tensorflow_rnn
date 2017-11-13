@@ -66,7 +66,7 @@ def embed_to_vocab(data_, vocab, predict=False):
 
 ## Load the data
 data_ = ""
-with open('datasets/compressed/first_rounded.txt', 'r') as f:
+with open('datasets/compressed/second_rounded.txt', 'r') as f:
     data_ += f.read()
 data_ = data_.split(' ')
 # data_ = data_[1::1]
@@ -83,11 +83,11 @@ in_size = out_size = len(vocab)
 lstm_size = 256 #128s
 num_layers = 2
 batch_size = 128 #128
-time_steps = 30 #50
+time_steps = 100 #50
 
 NUM_TRAIN_BATCHES = 3000
 
-LEN_TEST_TEXT = 50 # Number of test characters of text to generate after training the network
+LEN_TEST_TEXT = 40 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
 midi_filename = 'midiOut.txt'
 
@@ -144,7 +144,7 @@ if ckpt_file == "":
             print ("batch: ", i, "   loss: ", cst, "   speed: ", (100.0/diff), " batches / s")
 
             saver.save(sess, "saved/" + ckpt_filename + ".ckpt")
-            subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt [60,20]", shell=True)
+            subprocess.call("python rnn_tf.py saved/" + ckpt_filename + ".ckpt '[67,18000]'", shell=True)
             subprocess.call("python Midi/compressed_midi_player.py", shell=True)
 
     saver.save(sess, "saved/" + ckpt_filename + ".ckpt")

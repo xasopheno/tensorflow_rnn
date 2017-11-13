@@ -2,7 +2,7 @@ import math
 import ast
 
 def rounddown(x):
-    return int(math.floor(x / 10.0)) * 10
+    return int(math.floor(x / 1000.0)) * 2000
 
 with open('midiOut.txt', 'r') as f:
     with open("rounded.txt", 'a') as rounded_data:

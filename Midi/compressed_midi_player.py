@@ -40,7 +40,7 @@ def play_midi(value, length = 1):
 #     note_on = [0x90, value, 120] # channel 1, middle C, velocity 112
     # note_off = [0x80, num, 120]
     # midiout.send_message(note_on)
-    # time.sleep(length)
+    # time.sleep(length)zx
     # midiout.send_message(note_off)
 
 def play_silence(length):
@@ -60,14 +60,13 @@ with open('midiOut.txt', 'r') as f:
         value = ast.literal_eval(value)
         # print(value)
         midi_num = int(value[0])
-        length = int(value[1])
+        length = int(value[1]) / 350
         try:
             if midi_num is not 0:
                 print(midi_num, length)
                 play_midi(midi_num, length)
                 # print(value)
             else:
-                print(0, length)
                 play_silence(length)
                 # print(value)
         except:
