@@ -174,7 +174,7 @@ if __name__ == '__main__':
       model=_LSTMModel(num_features=1, num_units=128),
       optimizer=tf.train.AdamOptimizer(0.001))
 
-  estimator.train(input_fn=train_input_fn, steps=2000)
+  estimator.train(input_fn=train_input_fn, steps=200)
   evaluation_input_fn = tf.contrib.timeseries.WholeDatasetInputFn(reader)
   evaluation = estimator.evaluate(input_fn=evaluation_input_fn, steps=1)
   # Predict starting after the evaluation
