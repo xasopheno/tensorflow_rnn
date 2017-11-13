@@ -25,7 +25,7 @@ import tensorflow as tf
 from tensorflow.contrib.timeseries.python.timeseries import estimators as ts_estimators
 from tensorflow.contrib.timeseries.python.timeseries import model as ts_model
 import matplotlib
-matplotlib.use("agg")
+# matplotlib.use("agg")
 import matplotlib.pyplot as plt
 
 class _LSTMModel(ts_model.SequentialTimeSeriesModel):
@@ -152,7 +152,7 @@ class _LSTMModel(ts_model.SequentialTimeSeriesModel):
 
 
 if __name__ == '__main__':
-  tf.logging.set_verbosity(tf.logging.INFO)
+  # tf.logging.set_verbosity(tf.logging.INFO)
   csv_file_name = path.join("./data/multivariate_periods.csv")
   reader = tf.contrib.timeseries.CSVReader(
       csv_file_name,
@@ -168,6 +168,7 @@ if __name__ == '__main__':
   estimator.train(input_fn=train_input_fn, steps=200)
   evaluation_input_fn = tf.contrib.timeseries.WholeDatasetInputFn(reader)
   evaluation = estimator.evaluate(input_fn=evaluation_input_fn, steps=1)
+
   # Predict starting after the evaluation
   (predictions,) = tuple(estimator.predict(
       input_fn=tf.contrib.timeseries.predict_continuation_input_fn(
@@ -187,4 +188,6 @@ if __name__ == '__main__':
   predicted_lines = plt.plot(predicted_times, predicted, label="prediction", color="r")
   plt.legend(handles=[observed_lines[0], evaluated_lines[0], predicted_lines[0]],
              loc="upper left")
-  plt.savefig('predict_result.jpg')
+
+  plt.show()
+  # plt.savefig('predict_result.jpg')
