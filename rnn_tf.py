@@ -82,12 +82,12 @@ data = embed_to_vocab(data_, vocab,
 in_size = out_size = len(vocab)
 lstm_size = 256 #128s
 num_layers = 2
-batch_size = 128 #128
-time_steps = 100 #50
+batch_size = 20 #128
+time_steps = 15 #50
 
 NUM_TRAIN_BATCHES = 3000
 
-LEN_TEST_TEXT = 40 # Number of test characters of text to generate after training the network
+LEN_TEST_TEXT = 100 # Number of test characters of text to generate after training the network
 ckpt_filename = 'model'
 midi_filename = 'midiOut.txt'
 

@@ -1,8 +1,8 @@
 import math
 import ast
 
-def rounddown(x):
-    return int(math.floor(x / 1000.0)) * 2000
+def round_down(x):
+    return int(math.floor(x / 1000.0)) * 1000
 
 with open('midiOut.txt', 'r') as f:
     with open("rounded.txt", 'a') as rounded_data:
@@ -19,6 +19,16 @@ with open('midiOut.txt', 'r') as f:
             # print(value)
             midi_num = int(value[0])
             length = int(value[1])
-            length = rounddown(length)
+            length = round_down(length)
+            token = ''
+            # if midi_num == 0 and length > 3000:
+                # token = '|'
 
-            rounded_data.write('[' + str(midi_num) + ',' + str(length) + '] ')
+            rounded_data.write('[' + str(midi_num) + ',' + str(length) + ']' + token + ' ')
+
+
+"""
+
+
+
+"""
